@@ -1,10 +1,20 @@
 spring:
   application:
     name: quickiee-backend
-  datasource:
-    url: ""
   jpa:
     hibernate:
-      ddl-auto: none
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+  datasource:
+    url: jdbc:postgresql://ep-aged-frost-a1jhre63.ap-southeast-1.aws.neon.tech:5432/neondb?sslmode=require
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+server:
+  port: 8080
+
 
   
