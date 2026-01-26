@@ -1,0 +1,10 @@
+spring:
+  application:
+    name: quickiee-backend
+  datasource:
+    url: ""
+  jpa:
+    hibernate:
+      ddl-auto: none
+
+  
