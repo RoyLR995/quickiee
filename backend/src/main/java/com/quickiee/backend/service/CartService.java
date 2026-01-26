@@ -2,6 +2,8 @@ package com.quickiee.backend.service;
 
 import com.quickiee.backend.dto.CartItem;
 import com.quickiee.backend.dto.Product;
+import com.quickiee.backend.exception.ResourceNotFoundException;
+
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -19,6 +21,9 @@ public class CartService {
 
     public CartItem addToCart(int productId, int quantity) {
         Product product = productService.getProductById(productId);
+        if (product==null) {
+            new ResourceNotFoundException("Product not found");
+        }
 
         CartItem existingItem = cart.stream()
                 .filter(item -> item.getProductId() == productId)

@@ -3,6 +3,8 @@ package com.quickiee.backend.service;
 import com.quickiee.backend.dto.CartItem;
 import com.quickiee.backend.dto.Order;
 import com.quickiee.backend.dto.OrderItem;
+import com.quickiee.backend.exception.BadRequestException;
+
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -23,7 +25,7 @@ public class OrderService {
     public Order placeOrder() {
 
         if (cartService.isCartEmpty()) {
-            throw new RuntimeException("Cart is empty");
+            throw new BadRequestException("Cart is empty");
         }
 
         List<OrderItem> orderItems = new ArrayList<>();
