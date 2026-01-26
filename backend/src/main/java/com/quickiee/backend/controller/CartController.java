@@ -1,5 +1,6 @@
 package com.quickiee.backend.controller;
 
+import com.quickiee.backend.api.dto.CartItemResponse;
 import com.quickiee.backend.dto.CartItem;
 import com.quickiee.backend.service.CartService;
 import org.springframework.web.bind.annotation.*;
@@ -25,8 +26,8 @@ public class CartController {
     }
 
     @GetMapping
-    public List<CartItem> viewCart() {
-        return cartService.getCartItems();
+    public List<CartItemResponse> viewCart() {
+        return cartService.getCartResponses();
     }
 
     @DeleteMapping("/remove/{productId}")

@@ -1,5 +1,6 @@
 package com.quickiee.backend.service;
 
+import com.quickiee.backend.api.dto.CartItemResponse;
 import com.quickiee.backend.dto.CartItem;
 import com.quickiee.backend.dto.Product;
 import com.quickiee.backend.exception.ResourceNotFoundException;
@@ -57,6 +58,17 @@ public class CartService {
     public void clearCart() {
         cart.clear();
     }
+
+    public List<CartItemResponse> getCartResponses() {
+    return cart.stream()
+            .map(item -> new CartItemResponse(
+                    item.getProductId(),
+                    item.getProductName(),
+                    item.getQuantity(),
+                    item.getPrice()
+            ))
+            .toList();
+}
 
     public boolean isCartEmpty() {
         return cart.isEmpty();

@@ -1,5 +1,6 @@
 package com.quickiee.backend.service;
 
+import com.quickiee.backend.api.dto.ProductResponse;
 import com.quickiee.backend.dto.Product;
 import org.springframework.stereotype.Service;
 
@@ -24,8 +25,31 @@ public class ProductService {
                 "https://example.com/images/orange_juice.jpg", true)
     );
 
-    public List<Product> getAllProducts() {
-        return products;
+    public List<ProductResponse> getAllProducts() {
+        return products.stream()
+            .map(p -> new ProductResponse(
+                    p.getId(),
+                    p.getName(),
+                    p.getDescription(),
+                    p.getPrice(),
+                    p.getCategory(),
+                    p.getImageUrl(),
+                    p.isAvailable()
+            ))
+            .toList();
+    }
+
+    public ProductResponse getProductResponseById(int id) {
+        Product p = getProductById(id);
+        return new ProductResponse(
+                p.getId(),
+                p.getName(),
+                p.getDescription(),
+                p.getPrice(),
+                p.getCategory(),
+                p.getImageUrl(),
+                p.isAvailable()
+        );
     }
 
     public Product getProductById(int id) {
