@@ -1,76 +1,39 @@
 package com.quickiee.backend.service;
 
-import com.quickiee.backend.api.dto.CartItemResponse;
-import com.quickiee.backend.dto.CartItem;
-import com.quickiee.backend.dto.Product;
-import com.quickiee.backend.exception.ResourceNotFoundException;
+import com.quickiee.backend.entity.CartItem;
+import com.quickiee.backend.entity.User;
+import com.quickiee.backend.repository.*;
+
+import jakarta.transaction.Transactional;
 
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
 public class CartService {
 
-    private final ProductService productService;
-    private final List<CartItem> cart = new ArrayList<>();
+    private final CartRepository cartRepo;
 
-    public CartService(ProductService productService) {
-        this.productService = productService;
+    public CartService(CartRepository cartRepo) {
+        this.cartRepo = cartRepo;
     }
 
-    public CartItem addToCart(int productId, int quantity) {
-        Product product = productService.getProductById(productId);
-        if (product==null) {
-            new ResourceNotFoundException("Product not found");
-        }
-
-        CartItem existingItem = cart.stream()
-                .filter(item -> item.getProductId() == productId)
-                .findFirst()
-                .orElse(null);
-
-        if (existingItem != null) {
-            existingItem.setQuantity(existingItem.getQuantity() + quantity);
-            return existingItem;
-        }
-
-        CartItem newItem = new CartItem(
-                product.getId(),
-                product.getName(),
-                quantity,
-                product.getPrice()
-        );
-
-        cart.add(newItem);
-        return newItem;
+    public List<CartItem> getCartItems(User user) {
+        return cartRepo.findByUser(user);
     }
 
-    public List<CartItem> getCartItems() {
-        return cart;
+    public boolean isCartEmpty(User user) {
+        return cartRepo.countByUser(user) == 0;
     }
 
-    public void removeFromCart(int productId) {
-        cart.removeIf(item -> item.getProductId() == productId);
-    }
+    // @Transactional
+    // public void clearCart(User user) {
+    //     cartRepo.deleteByUser(user);
+    // }
 
-    public void clearCart() {
-        cart.clear();
-    }
-
-    public List<CartItemResponse> getCartResponses() {
-    return cart.stream()
-            .map(item -> new CartItemResponse(
-                    item.getProductId(),
-                    item.getProductName(),
-                    item.getQuantity(),
-                    item.getPrice()
-            ))
-            .toList();
-}
-
-    public boolean isCartEmpty() {
-        return cart.isEmpty();
+    @Transactional
+    public void clearCart(Long userId) {
+        cartRepo.deleteByUserId(userId);
     }
 }

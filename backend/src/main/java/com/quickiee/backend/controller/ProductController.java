@@ -1,12 +1,8 @@
 package com.quickiee.backend.controller;
 
-import com.quickiee.backend.api.dto.ProductResponse;
+import com.quickiee.backend.entity.Product;
 import com.quickiee.backend.service.ProductService;
-
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -21,13 +17,24 @@ public class ProductController {
     }
 
     @GetMapping
-    public List<ProductResponse> getProducts() {
+    public List<Product> getAllProducts(@RequestParam(required = false) String category,
+                                        @RequestParam(required = false) String search) {
+        if (category != null) {
+            return productService.getProductsByCategory(category);
+        }
+        if (search != null) {
+            return productService.searchProducts(search);
+        }
         return productService.getAllProducts();
     }
 
-    @GetMapping("/{id}")
-    public ProductResponse getProduct(@PathVariable int id) {
-        return productService.getProductResponseById(id);
+    @GetMapping("/categories")
+    public List<String> getAllCategories() {
+        return productService.getAllCategories();
     }
 
+    @GetMapping("/{id}")
+    public Product getProductById(@PathVariable int id) {
+        return productService.getProductById(id);
+    }
 }
