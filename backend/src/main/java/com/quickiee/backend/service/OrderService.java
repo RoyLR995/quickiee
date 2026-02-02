@@ -7,6 +7,7 @@ import com.quickiee.backend.entity.Product;
 import com.quickiee.backend.entity.User;
 import com.quickiee.backend.exception.BadRequestException;
 import com.quickiee.backend.repository.OrderRepository;
+import com.quickiee.backend.repository.ProductRepository;
 import com.quickiee.backend.repository.UserRepository;
 
 import jakarta.transaction.Transactional;
@@ -22,15 +23,18 @@ public class OrderService {
     private final CartService cartService;
     private final UserRepository userRepository;
     private final OrderRepository orderRepository;
+    private final ProductRepository productRepository;
 
     public OrderService(
             CartService cartService,
             UserRepository userRepository,
-            OrderRepository orderRepository
+            OrderRepository orderRepository,
+            ProductRepository productRepository
     ) {
         this.cartService = cartService;
         this.userRepository = userRepository;
         this.orderRepository = orderRepository;
+        this.productRepository = productRepository;
     }
 
     @Transactional
@@ -52,12 +56,19 @@ public class OrderService {
 
         for (CartItem cartItem : cartService.getCartItems(user)) {
 
-            Product product = cartItem.getProduct();
+            Product product = productRepository
+                .findByIdForUpdate(cartItem.getProduct().getId());
+
+            int requiredQty = cartItem.getQuantity();
+            if (product.getStockQuantity() < requiredQty) {
+                throw new BadRequestException("Insufficient stock for product: " + product.getName());
+            }
+            product.reduceStock(requiredQty);
 
             OrderItem item = new OrderItem(
                     product.getId(),
                     product.getName(),
-                    cartItem.getQuantity(),
+                    requiredQty,
                     product.getPrice()
             );
 

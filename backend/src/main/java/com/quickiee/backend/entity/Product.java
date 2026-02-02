@@ -66,4 +66,12 @@ public class Product {
     public String getImageUrl() { return imageUrl; }
 
     public boolean isAvailable() { return available; }
+
+    
+    public void reduceStock(int qty) {
+        this.stockQuantity -= qty;
+        if (this.stockQuantity <= 0) {
+            this.available = false;
+        }
+    }
 }
