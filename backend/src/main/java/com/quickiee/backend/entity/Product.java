@@ -30,7 +30,13 @@ public class Product {
     public Product() {
         // JPA
     }
-
+    
+    public void increaseStock(int qty) {
+    this.stockQuantity += qty;
+    if (this.stockQuantity > 0) {
+        this.available = true;
+    }
+}
     public Product(
             String name,
             String description,

@@ -3,6 +3,7 @@ package com.quickiee.backend.service;
 import com.quickiee.backend.entity.CartItem;
 import com.quickiee.backend.entity.Order;
 import com.quickiee.backend.entity.OrderItem;
+import com.quickiee.backend.entity.OrderStatus;
 import com.quickiee.backend.entity.Product;
 import com.quickiee.backend.entity.User;
 import com.quickiee.backend.exception.BadRequestException;
@@ -36,6 +37,33 @@ public class OrderService {
         this.orderRepository = orderRepository;
         this.productRepository = productRepository;
     }
+    @Transactional
+    public Order cancelOrder(Long orderId, Long userId) {
+
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new RuntimeException("Order not found"));
+
+        if (!order.getUser().getId().equals(userId)) {
+            throw new RuntimeException("Unauthorized");
+        }
+
+        if (order.getStatus() == OrderStatus.CANCELLED) {
+            throw new BadRequestException("Order already cancelled");
+        }
+
+        // 🔥 restore stock
+        for (OrderItem item : order.getItems()) {
+
+            Product product = productRepository
+                    .findByIdForUpdate(item.getProductId());
+
+            product.increaseStock(item.getQuantity());
+        }
+
+        order.setStatus(OrderStatus.CANCELLED);
+
+        return orderRepository.save(order);
+    }
 
     @Transactional
     public Order placeOrder(Long userId) {
@@ -49,7 +77,7 @@ public class OrderService {
 
         Order order = new Order();
         order.setUser(user);
-        order.setStatus("PLACED");
+        order.setStatus(OrderStatus.PLACED);
 
         List<OrderItem> orderItems = new ArrayList<>();
         double totalAmount = 0;

@@ -39,6 +39,15 @@ public class OrderController {
         return mapToOrderResponse(order);
     }
 
+    @PutMapping("/{orderId}/cancel")
+    public OrderResponse cancelOrder(
+            @PathVariable Long orderId,
+            @RequestHeader("X-USER-ID") Long userId) {
+
+        Order order = orderService.cancelOrder(orderId, userId);
+        return mapToOrderResponse(order);
+    }
+
     // Get single order by ID
     @GetMapping("/{orderId}")
     public OrderResponse getOrder(@PathVariable Long orderId,
@@ -57,7 +66,7 @@ public class OrderController {
     private OrderResponse mapToOrderResponse(Order order) {
         OrderResponse response = new OrderResponse();
         response.setId(order.getId());
-        response.setStatus(order.getStatus());
+        response.setStatus(order.getStatus().name());
         response.setTotalAmount(order.getTotalAmount());
 
         // Map user
