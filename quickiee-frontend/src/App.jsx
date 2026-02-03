@@ -4,6 +4,7 @@ import CartPage from "./pages/CartPage";
 import LoginPage from "./pages/LoginPage";
 import Navbar from "./components/Navbar";
 import ProtectedRoute from "./components/ProtectedRoute";
+import SignupPage from "./pages/SignupPage";
 
 export default function App() {
   return (
@@ -11,6 +12,7 @@ export default function App() {
       <Navbar />
       <Routes>
         <Route path="/" element={<ProductList />} />
+        <Route path="/register" element={<SignupPage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route
           path="/cart"

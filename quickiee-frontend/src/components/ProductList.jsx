@@ -12,7 +12,10 @@ export default function ProductList() {
 
   useEffect(() => {
     fetchProducts();
-    fetchCart();
+    const token = localStorage.getItem("token");
+    if (token) {
+      fetchCart();
+    }
   }, []);
 
   async function fetchProducts() {

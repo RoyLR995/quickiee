@@ -13,7 +13,7 @@ export default function LoginPage() {
         "http://localhost:8080/api/auth/login",
         { email, password }
         );
-
+        console.log("LOGIN RESPONSE:", res.data);
         localStorage.setItem("token", res.data.token);
         alert("Logged in ✅");
         navigate("/");
@@ -46,6 +46,13 @@ export default function LoginPage() {
       >
         Login
       </button>
+
+      <p className="mt-4 text-center">
+        New user?{" "}
+        <a href="/register" className="text-blue-600 underline">
+            Create account
+        </a>
+        </p>
     </div>
   );
 }
