@@ -1,9 +1,26 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
-import ProductList from './components/ProductList.jsx'
+import { Routes, Route } from "react-router-dom";
+import ProductList from "./components/ProductList";
+import CartPage from "./pages/CartPage";
+import LoginPage from "./pages/LoginPage";
+import Navbar from "./components/Navbar";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 export default function App() {
-  return <ProductList />;
+  return (
+    <>
+      <Navbar />
+      <Routes>
+        <Route path="/" element={<ProductList />} />
+        <Route path="/login" element={<LoginPage />} />
+        <Route
+          path="/cart"
+          element={
+            <ProtectedRoute>
+              <CartPage />
+            </ProtectedRoute>
+          }
+        />
+      </Routes>
+    </>
+  );
 }

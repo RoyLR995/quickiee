@@ -20,7 +20,7 @@ public class ProductSeeder {
                         120.0,
                         "Fruits",
                         50,
-                        "/images/red_apple.jpg",
+                        "http://localhost:8080/images/red_apple.jpg",
                         true
                 ));
 
@@ -30,7 +30,7 @@ public class ProductSeeder {
                         60.0,
                         "Fruits",
                         100,
-                        "/images/banana.jpg",
+                        "http://localhost:8080/images/banana.jpg",
                         true
                 ));
 
@@ -40,7 +40,7 @@ public class ProductSeeder {
                         45.0,
                         "Dairy",
                         200,
-                        "/images/milk.jpg",
+                        "http://localhost:8080/images/milk.jpg",
                         true
                 ));
 
@@ -50,7 +50,7 @@ public class ProductSeeder {
                         35.0,
                         "Bakery",
                         80,
-                        "/images/bread.jpg",
+                        "http://localhost:8080/images/bread.jpg",
                         true
                 ));
 
@@ -60,7 +60,7 @@ public class ProductSeeder {
                         450.0,
                         "Nuts & Dry Fruits",
                         40,
-                        "/images/almonds.jpg",
+                        "http://localhost:8080/images/almonds.jpg",
                         true
                 ));
 
@@ -70,7 +70,7 @@ public class ProductSeeder {
                         120.0,
                         "Beverages",
                         60,
-                        "/images/orange_juice.jpg",
+                        "http://localhost:8080/images/orange_juice.jpg",
                         true
                 ));
 
