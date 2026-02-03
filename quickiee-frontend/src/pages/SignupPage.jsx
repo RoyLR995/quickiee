@@ -11,7 +11,7 @@ export default function SignupPage() {
 
   async function register() {
     try {
-      const res = await api.post("http://localhost:8080/api/auth/signup", {
+      const res = await api.post("hhttps://quickiee-zd1a.onrender.com/api/auth/signup", {
         email,
         name,
         password,

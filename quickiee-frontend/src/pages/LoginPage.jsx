@@ -12,7 +12,7 @@ export default function LoginPage() {
   async function login() {
     try {
         const res = await axios.post(
-        "http://localhost:8080/api/auth/login",
+        "https://quickiee-zd1a.onrender.com/api/auth/login",
         { email, password }
         );
         console.log("LOGIN RESPONSE:", res.data);
