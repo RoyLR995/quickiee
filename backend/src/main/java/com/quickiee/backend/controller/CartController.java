@@ -6,6 +6,8 @@ import com.quickiee.backend.entity.User;
 import com.quickiee.backend.repository.CartRepository;
 import com.quickiee.backend.repository.ProductRepository;
 import com.quickiee.backend.repository.UserRepository;
+
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.transaction.Transactional;
 import org.springframework.web.bind.annotation.*;
 
@@ -34,7 +36,8 @@ public class CartController {
 
     /** 1️⃣ List all items in cart */
     @GetMapping
-    public List<CartItem> getCart(@RequestHeader("X-USER-ID") Long userId) {
+    public List<CartItem> getCart(HttpServletRequest request) {
+        Long userId = (Long) request.getAttribute("userId");
         User user = getUser(userId);
         return cartRepo.findByUser(user);
     }
@@ -43,7 +46,8 @@ public class CartController {
     @PostMapping("/add")
     @Transactional
     public CartItem addToCart(@RequestParam int productId,
-                              @RequestHeader("X-USER-ID") Long userId) {
+                              HttpServletRequest request) {
+        Long userId = (Long) request.getAttribute("userId");
 
         User user = getUser(userId);
 
@@ -66,7 +70,8 @@ public class CartController {
     @PostMapping("/decrement")
     @Transactional
     public CartItem decrementCart(@RequestParam int productId,
-                                  @RequestHeader("X-USER-ID") Long userId) {
+                                  HttpServletRequest request) {
+        Long userId = (Long) request.getAttribute("userId");
 
         User user = getUser(userId);
 

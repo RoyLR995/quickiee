@@ -7,6 +7,8 @@ import com.quickiee.backend.entity.Order;
 import com.quickiee.backend.repository.OrderRepository;
 import com.quickiee.backend.service.OrderService;
 
+import jakarta.servlet.http.HttpServletRequest;
+
 import java.util.List;
 
 import org.springframework.web.bind.annotation.*;
@@ -34,7 +36,8 @@ public class OrderController {
 
     // Place a new order
     @PostMapping("/place")
-    public OrderResponse placeOrder(@RequestHeader("X-USER-ID") Long userId) {
+    public OrderResponse placeOrder(HttpServletRequest request) {
+        Long userId = (Long) request.getAttribute("userId");
         Order order = orderService.placeOrder(userId);
         return mapToOrderResponse(order);
     }
@@ -42,8 +45,8 @@ public class OrderController {
     @PutMapping("/{orderId}/cancel")
     public OrderResponse cancelOrder(
             @PathVariable Long orderId,
-            @RequestHeader("X-USER-ID") Long userId) {
-
+            HttpServletRequest request) {
+        Long userId = (Long) request.getAttribute("userId");
         Order order = orderService.cancelOrder(orderId, userId);
         return mapToOrderResponse(order);
     }
@@ -51,7 +54,8 @@ public class OrderController {
     // Get single order by ID
     @GetMapping("/{orderId}")
     public OrderResponse getOrder(@PathVariable Long orderId,
-                                  @RequestHeader("X-USER-ID") Long userId) {
+                                  HttpServletRequest request) {
+        Long userId = (Long) request.getAttribute("userId");
         Order order = orderRepo.findById(orderId)
                 .orElseThrow(() -> new RuntimeException("Order not found"));
 

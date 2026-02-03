@@ -1,5 +1,6 @@
 package com.quickiee.backend.controller;
 
+import com.quickiee.backend.dto.LoginRequest;
 import com.quickiee.backend.entity.User;
 import com.quickiee.backend.service.AuthService;
 import org.springframework.web.bind.annotation.*;
@@ -26,10 +27,8 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public User login(@RequestBody Map<String, String> body) {
-        return authService.login(
-                body.get("email"),
-                body.get("password")
-        );
+    public Map<String,String> login(@RequestBody LoginRequest req) {
+        String token = authService.login(req.getEmail(), req.getPassword());
+        return Map.of("token", token);
     }
 }
