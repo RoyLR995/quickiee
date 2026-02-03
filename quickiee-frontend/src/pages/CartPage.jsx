@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react";
 import api from "../api";
+import { useCart } from "../context/CartContext";
 
 export default function CartPage() {
   const [cart, setCart] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const { refreshCartCount } = useCart();
 
   useEffect(() => {
     fetchCart();
@@ -27,6 +29,7 @@ export default function CartPage() {
     try {
       await api.post(`/cart/add?productId=${productId}`);
       fetchCart(); // refresh
+      refreshCartCount();
     } catch (err) {
       console.error(err);
       alert("Increase failed");
@@ -38,6 +41,7 @@ export default function CartPage() {
     try {
       await api.post(`/cart/decrement?productId=${productId}`);
       fetchCart(); // refresh
+      refreshCartCount();
     } catch (err) {
       console.error(err);
       alert("Decrease failed");

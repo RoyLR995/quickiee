@@ -1,12 +1,14 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../api";
+import { useCart } from "../context/CartContext";
 
 export default function ProductList() {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [cartMap, setCartMap] = useState({});
+  const { refreshCartCount } = useCart();
 
   const navigate = useNavigate();
 
@@ -67,6 +69,7 @@ export default function ProductList() {
     try {
       await api.post(`/cart/add?productId=${productId}`);
       alert("Added to cart ✅");
+      refreshCartCount();
     } catch (err) {
       console.error(err);
 
