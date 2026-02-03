@@ -1,60 +1,94 @@
 package com.quickiee.backend.controller;
 
-import com.quickiee.backend.dto.CartItem;
-import com.quickiee.backend.dto.Product;
+import com.quickiee.backend.entity.CartItem;
+import com.quickiee.backend.entity.Product;
+import com.quickiee.backend.entity.User;
+import com.quickiee.backend.repository.CartRepository;
+import com.quickiee.backend.repository.ProductRepository;
+import com.quickiee.backend.repository.UserRepository;
+
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.transaction.Transactional;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/cart")
 public class CartController {
 
-    // In-memory cart storage
-    private final List<CartItem> cart = new ArrayList<>();
+    private final CartRepository cartRepo;
+    private final ProductRepository productRepo;
+    private final UserRepository userRepo;
 
-    // Reference products from ProductController (simulate DB)
-    private final List<Product> products = new ProductController().getProducts();
+    public CartController(CartRepository cartRepo,
+                          ProductRepository productRepo,
+                          UserRepository userRepo) {
+        this.cartRepo = cartRepo;
+        this.productRepo = productRepo;
+        this.userRepo = userRepo;
+    }
 
-    // Add product to cart
-    @PostMapping("/add/{productId}")
-    public CartItem addToCart(@PathVariable int productId, @RequestParam(defaultValue = "1") int quantity) {
-        Product product = products.stream()
-                .filter(p -> p.getId() == productId)
-                .findFirst()
+    private User getUser(Long userId) {
+        return userRepo.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+    }
+
+    /** 1️⃣ List all items in cart */
+    @GetMapping
+    public List<CartItem> getCart(HttpServletRequest request) {
+        Long userId = (Long) request.getAttribute("userId");
+        User user = getUser(userId);
+        return cartRepo.findByUser(user);
+    }
+
+    /** 2️⃣ Add to cart (increment if exists) */
+    @PostMapping("/add")
+    @Transactional
+    public CartItem addToCart(@RequestParam int productId,
+                              HttpServletRequest request) {
+        Long userId = (Long) request.getAttribute("userId");
+
+        User user = getUser(userId);
+
+        Product product = productRepo.findById(productId)
                 .orElseThrow(() -> new RuntimeException("Product not found"));
 
-        // Check if already in cart
-        CartItem existing = cart.stream()
-                .filter(c -> c.getProductId() == productId)
-                .findFirst()
-                .orElse(null);
+        // Check if product already in cart
+        CartItem cartItem = cartRepo.findByUserAndProduct(user, product).orElse(null);
 
-        if (existing != null) {
-            existing.setQuantity(existing.getQuantity() + quantity);
-            return existing;
+        if (cartItem != null) {
+            cartItem.setQuantity(cartItem.getQuantity() + 1); // increment
+        } else {
+            cartItem = new CartItem(user, product, 1); // new item with quantity 1
         }
 
-        CartItem item = new CartItem(product.getId(), product.getName(), quantity, product.getPrice());
-        cart.add(item);
-        return item;
+        return cartRepo.save(cartItem);
     }
 
-    // View cart
-    @GetMapping
-    public List<CartItem> viewCart() {
-        return cart;
-    }
+    /** 3️⃣ Decrement quantity (remove if 0) */
+    @PostMapping("/decrement")
+    @Transactional
+    public CartItem decrementCart(@RequestParam int productId,
+                                  HttpServletRequest request) {
+        Long userId = (Long) request.getAttribute("userId");
 
-    // Remove product from cart
-    @DeleteMapping("/remove/{productId}")
-    public String removeFromCart(@PathVariable int productId) {
-        boolean removed = cart.removeIf(item -> item.getProductId() == productId);
-        if (removed) {
-            return "Product removed from cart";
+        User user = getUser(userId);
+
+        Product product = productRepo.findById(productId)
+                .orElseThrow(() -> new RuntimeException("Product not found"));
+
+        CartItem cartItem = cartRepo.findByUserAndProduct(user, product)
+                .orElseThrow(() -> new RuntimeException("Item not in cart"));
+
+        int newQty = cartItem.getQuantity() - 1;
+
+        if (newQty <= 0) {
+            cartRepo.delete(cartItem); // remove item if quantity 0
+            return null;
         } else {
-            return "Product not found in cart";
+            cartItem.setQuantity(newQty);
+            return cartRepo.save(cartItem);
         }
     }
 }
