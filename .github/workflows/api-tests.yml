@@ -37,11 +37,22 @@ jobs:
         if: always()
         run: ./mvnw -q allure:report
 
+      - name: Create Pages index redirect
+        if: always()
+        run: |
+          mkdir -p target/site
+          cat > target/site/index.html <<'EOF'
+          <!doctype html>
+          <meta http-equiv="refresh" content="0; url=allure-maven-plugin/">
+          <title>Allure Report</title>
+          <a href="allure-maven-plugin/">Open Allure Report</a>
+          EOF
+
       - name: Upload Allure report artifact
         if: always()
         uses: actions/upload-pages-artifact@v3
         with:
-          path: backend/target/site/allure-maven-plugin
+          path: backend/target/site
 
   deploy-pages:
     needs: api-tests
