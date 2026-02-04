@@ -1,6 +1,7 @@
 package com.quickiee.backend.testsupport;
 
 import io.restassured.RestAssured;
+import io.qameta.allure.restassured.AllureRestAssured;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.TestInstance;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -19,6 +20,7 @@ public abstract class ApiTestBase {
     void configureRestAssured() {
         RestAssured.baseURI = "http://localhost";
         RestAssured.port = port;
+        RestAssured.filters(new AllureRestAssured());
         RestAssured.enableLoggingOfRequestAndResponseIfValidationFails();
     }
 }

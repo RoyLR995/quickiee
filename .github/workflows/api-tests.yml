@@ -5,6 +5,11 @@ on:
     branches: ["main"]
   pull_request:
 
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
 jobs:
   api-tests:
     runs-on: ubuntu-latest
@@ -21,25 +26,30 @@ jobs:
           distribution: temurin
           java-version: "17"
           cache: maven
+
       - name: Make mvnw executable
         run: chmod +x ./mvnw
+
       - name: Run tests
         run: ./mvnw -q test
 
-      - name: Generate test report
+      - name: Generate Allure report
         if: always()
-        run: ./mvnw -q surefire-report:report-only
+        run: ./mvnw -q allure:report
 
-      - name: Upload surefire reports
+      - name: Upload Allure report artifact
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-pages-artifact@v3
         with:
-          name: surefire-reports
-          path: backend/target/surefire-reports
+          path: backend/target/site/allure-maven-plugin
 
-      - name: Upload HTML test report
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: surefire-html-report
-          path: backend/target/site
+  deploy-pages:
+    needs: api-tests
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
