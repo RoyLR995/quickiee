@@ -9,7 +9,7 @@ import org.testng.annotations.Test;
 
 public class GuestAccessTest extends BaseUiTest {
 
-    @Test
+    @Test(groups = {"smoke", "regression"})
     public void guestIsRedirectedToLoginForCart() {
         driver.get(UiConfig.baseUrl() + "/cart");
         waitForPageReady();

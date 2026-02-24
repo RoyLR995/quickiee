@@ -8,7 +8,9 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.annotations.AfterMethod;
+import org.testng.annotations.AfterSuite;
 import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.BeforeSuite;
 
 import java.time.Duration;
 
@@ -16,7 +18,7 @@ public abstract class BaseUiTest {
     protected WebDriver driver;
     protected WebDriverWait wait;
 
-    @BeforeMethod
+    @BeforeSuite(alwaysRun = true)
     public void setUp() {
         WebDriverManager.chromedriver().setup();
 
@@ -32,7 +34,7 @@ public abstract class BaseUiTest {
         wait = new WebDriverWait(driver, Duration.ofSeconds(20));
     }
 
-    @AfterMethod
+    @AfterSuite
     public void tearDown() {
         if (driver != null) {
             driver.quit();

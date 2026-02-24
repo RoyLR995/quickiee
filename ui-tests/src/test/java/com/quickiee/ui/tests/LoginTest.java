@@ -7,7 +7,7 @@ import org.testng.annotations.Test;
 
 public class LoginTest extends BaseUiTest {
 
-    @Test
+    @Test(groups = {"smoke", "regression"})
     public void userCanLoginFromUi() {
         LoginPage loginPage = new LoginPage(driver, wait);
         loginPage.open();

@@ -10,7 +10,7 @@ import org.testng.annotations.Test;
 
 public class CartFlowTest extends BaseUiTest {
 
-    @Test
+    @Test(groups = {"regression"})
     public void userCanAddItemAndSeeCart() {
         LoginPage loginPage = new LoginPage(driver, wait);
         loginPage.open();
